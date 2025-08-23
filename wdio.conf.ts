@@ -14,6 +14,10 @@ export const config: WebdriverIO.Config = {
     // =================
     // Service Providers
     // =================
+    services: [['appium', {
+        command: 'appium'
+    }]],
+    //
     // WebdriverIO supports Sauce Labs, Browserstack, Testing Bot and LambdaTest (other cloud providers
     // should work too though). These services define specific user and key (or access key)
     // values you need to put in here in order to connect to these services.
