@@ -1,5 +1,5 @@
 {
-  "name": "mobileAutomationRepo",
+  "name": "mobile-automation-repo",
   "type": "module",
   "devDependencies": {
     "@badisi/wdio-harness": "^4.2.0",
@@ -10,6 +10,7 @@
     "@wdio/mocha-framework": "^9.18.0",
     "@wdio/sauce-service": "^9.18.4",
     "@wdio/spec-reporter": "^9.18.0",
+    "appium": "^2.19.0",
     "appium-uiautomator2-driver": "^4.2.7",
     "wdio-wait-for": "^3.1.0"
   },
