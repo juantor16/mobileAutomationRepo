@@ -62,4 +62,43 @@ export class ProductPage{
         await this.verificarCantidad()
         await this.verificarBotonAgregarAlCarrito()
     }
+
+    // Métodos de interacción
+    public async aumentarCantidad(){
+        await this.botonDeMas.click()
+    }
+
+    public async disminuirCantidad(){
+        await this.botonDeMenos.click()
+    }
+
+    public async obtenerCantidadActual(): Promise<string>{
+        return await this.cantidad.getText()
+    }
+
+    public async agregarAlCarrito(){
+        await this.botonAgregarAlCarrito.click()
+    }
+
+    public async establecerCantidad(cantidadDeseada: number){
+        const cantidadActual = parseInt(await this.obtenerCantidadActual())
+        
+        if(cantidadActual < cantidadDeseada){
+            for(let i = cantidadActual; i < cantidadDeseada; i++){
+                await this.aumentarCantidad()
+            }
+        } else if(cantidadActual > cantidadDeseada){
+            for(let i = cantidadActual; i > cantidadDeseada; i--){
+                await this.disminuirCantidad()
+            }
+        }
+    }
+
+    public async obtenerPrecioDelProducto(): Promise<string>{
+        return await this.precioDelProducto.getText()
+    }
+
+    public async obtenerNombreDelProducto(): Promise<string>{
+        return await this.title.getText()
+    }
 }

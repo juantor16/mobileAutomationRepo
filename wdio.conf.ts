@@ -1,4 +1,8 @@
 import path from 'path';
+import dotenv from 'dotenv';
+
+// Cargar variables de entorno
+dotenv.config();
 
 export const config: WebdriverIO.Config = {
     //
@@ -22,8 +26,8 @@ export const config: WebdriverIO.Config = {
     // should work too though). These services define specific user and key (or access key)
     // values you need to put in here in order to connect to these services.
     //
-    user: process.env["oauth-juantor16-e6c93"],
-    key: process.env["92f0dd4e-d6ca-4d0b-a4f8-98375e2a0758"],
+    user: process.env.SAUCE_USERNAME,
+    key: process.env.SAUCE_ACCESS_KEY,
     //
     // If you run your tests on Sauce Labs you can specify the region you want to run your tests
     // in via the `region` property. Available short handles for regions are `us` (default) and `eu`.
@@ -77,10 +81,10 @@ export const config: WebdriverIO.Config = {
     capabilities: [{
         // capabilities for local Appium web tests on an Android Emulator
         platformName: 'Android',
-        'appium:deviceName': 'Pixel_6',
-        'appium:platformVersion': '16.0',
+        'appium:deviceName': process.env.DEVICE_NAME || 'Pixel_6',
+        'appium:platformVersion': process.env.PLATFORM_VERSION || '16.0',
         'appium:automationName': 'UiAutomator2',
-        'appium:app': path.resolve('./data/mda-2.2.0-25.apk'),
+        'appium:app': path.resolve(process.env.APP_PATH || './data/mda-2.2.0-25.apk'),
         'appium:autoGrantPermissions': true,
     }],
 
@@ -154,7 +158,16 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: [
+        'spec',
+        ['allure', {
+            outputDir: 'allure-results',
+            disableWebdriverStepsReporting: false,
+            disableWebdriverScreenshotsReporting: false,
+            disableMochaHooks: false,
+            addConsoleLogs: true,
+        }]
+    ],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -228,13 +241,16 @@ export const config: WebdriverIO.Config = {
      * Hook that gets executed before the suite starts
      * @param {object} suite suite details
      */
-    // beforeSuite: function (suite) {
-    // },
+    beforeSuite: async function (suite) {
+        console.log(`\n🚀 Iniciando suite de pruebas: ${suite.title}`)
+        console.log(`📋 Total de tests en la suite: ${suite.tests.length}`)
+    },
     /**
      * Function to be executed before a test (in Mocha/Jasmine) starts.
      */
-    // beforeTest: function (test, context) {
-    // },
+    beforeTest: async function (test, context) {
+        console.log(`\n🧪 Ejecutando test: ${test.title}`)
+    },
     /**
      * Hook that gets executed _before_ a hook within the suite starts (e.g. runs before calling
      * beforeEach in Mocha)
@@ -257,16 +273,25 @@ export const config: WebdriverIO.Config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
-    // },
+    afterTest: async function(test, context, { error, result, duration, passed, retries }) {
+        // Tomar screenshot si el test falla
+        if (!passed && error) {
+            await browser.takeScreenshot()
+        }
+    },
 
 
     /**
      * Hook that gets executed after the suite has ended
      * @param {object} suite suite details
      */
-    // afterSuite: function (suite) {
-    // },
+    afterSuite: async function (suite) {
+        const passed = suite.tests.filter(test => test.state === 'passed').length
+        const failed = suite.tests.filter(test => test.state === 'failed').length
+        console.log(`\n✅ Tests pasados: ${passed}`)
+        console.log(`❌ Tests fallidos: ${failed}`)
+        console.log(`⏱️  Duración total: ${suite.duration / 1000}s\n`)
+    },
     /**
      * Runs after a WebdriverIO command gets executed
      * @param {string} commandName hook command name

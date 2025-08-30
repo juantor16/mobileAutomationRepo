@@ -1,0 +1,87 @@
+{
+  "users": {
+    "validUser": {
+      "email": "bod@example.com",
+      "password": "10203040",
+      "firstName": "Bob",
+      "lastName": "Loblaw"
+    },
+    "invalidUser": {
+      "email": "invalid@test.com",
+      "password": "wrongpassword"
+    },
+    "lockedUser": {
+      "email": "alice@example.com",
+      "password": "10203040"
+    },
+    "emptyCredentials": {
+      "email": "",
+      "password": ""
+    }
+  },
+  "products": {
+    "sauceLabsBackpack": {
+      "name": "Sauce Labs Backpack",
+      "price": "$29.99",
+      "description": "carry.allTheThings() with the sleek, streamlined Sly Pack"
+    },
+    "sauceLabsBikeLight": {
+      "name": "Sauce Labs Bike Light",
+      "price": "$9.99",
+      "description": "A red light isn't the desired state in testing but it sure helps when riding"
+    },
+    "sauceLabsBoltTShirt": {
+      "name": "Sauce Labs Bolt T-Shirt",
+      "price": "$15.99",
+      "description": "Get your testing superhero on with the Sauce Labs bolt T-shirt"
+    }
+  },
+  "messages": {
+    "errors": {
+      "invalidCredentials": "Provided credentials do not match any user in this service.",
+      "lockedUser": "Sorry, this user has been locked out.",
+      "emptyEmail": "Username is required",
+      "emptyPassword": "Password is required"
+    },
+    "success": {
+      "productAdded": "Product added to cart successfully",
+      "orderPlaced": "Thank you for your order!",
+      "logoutSuccess": "You have been logged out successfully"
+    }
+  },
+  "testOrders": {
+    "singleItem": {
+      "quantity": 1,
+      "expectedTotal": "$29.99"
+    },
+    "multipleItems": {
+      "quantity": 3,
+      "expectedTotal": "$89.97"
+    },
+    "mixedCart": {
+      "items": [
+        {
+          "name": "Sauce Labs Backpack",
+          "quantity": 1
+        },
+        {
+          "name": "Sauce Labs Bike Light",
+          "quantity": 2
+        }
+      ],
+      "expectedTotal": "$49.97"
+    }
+  },
+  "checkout": {
+    "validInfo": {
+      "firstName": "John",
+      "lastName": "Doe",
+      "zipCode": "12345"
+    },
+    "invalidInfo": {
+      "firstName": "",
+      "lastName": "",
+      "zipCode": "invalid"
+    }
+  }
+}
