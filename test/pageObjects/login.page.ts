@@ -8,6 +8,7 @@ export class LoginPage{
     private get inputEmail(){ return $('#nameET')}
     private get inputPassword(){ return $('#passwordET')}
     private get botonLoginDashboard(){ return $('~Tap to login with given credentials')}
+    public get mensajeDeErrorDePassword(){ return $('#passwordErrorTV')}
 
     // Acciones
     public async ingresarCredenciales(email: string, password: string){
