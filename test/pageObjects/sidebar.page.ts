@@ -1,4 +1,6 @@
-export class SidebarPage{
+import { BasePage } from './base.page';
+
+export class SidebarPage extends BasePage {
     
     // Localizadores
     private get botonMenu(){ return $('~View menu')}
@@ -17,14 +19,15 @@ export class SidebarPage{
     }
 
     public async clickearBotonDeMenu(){
-        await this.botonMenu.click()
+        await this.tap(this.botonMenu, 'Abrir menú lateral')
     }
 
     public async clickearBotonDeLogin(){
-        await this.botonLogin.click()
+        await this.tap(this.botonLogin, 'Ir a la pantalla de login')
     }
 
     public async clickearBotonDeLogout(){
-        await this.botonLogout.click()
+        await this.tap(this.botonLogout, 'Cerrar sesión desde el menú')
     }
+
 }

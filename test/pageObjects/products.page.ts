@@ -1,13 +1,17 @@
-export class ProductsPage {
+import { BasePage } from './base.page';
+
+export class ProductsPage extends BasePage {
 
     private get tituloDeProductos() { return $('#productTV') }
-    private getListaDeProductos(){ return $$('(//android.widget.ImageView[@content-desc="Product Image"])')}
-
     public async verificarTituloDeProductos() {
-        expect(await this.tituloDeProductos.isDisplayed()).toBe(true)
+        await this.assertVisible(this.tituloDeProductos, 'Verificar que se muestre el título de productos')
     }
 
     public async clickearPrimerProducto(){
-        await this.getListaDeProductos()[0].click()
+        const primerProducto = $('(//android.widget.ImageView[@content-desc="Product Image"])[1]')
+        if (!(await primerProducto.isExisting())) {
+            throw new Error('No se encontraron productos disponibles para seleccionar')
+        }
+        await this.tap(primerProducto, 'Seleccionar el primer producto del listado')
     }
 }
