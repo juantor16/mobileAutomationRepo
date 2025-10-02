@@ -1,4 +1,5 @@
 import path from 'path';
+import allure from '@wdio/allure-reporter';
 
 export const config: WebdriverIO.Config = {
     //
@@ -68,7 +69,7 @@ export const config: WebdriverIO.Config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 10,
+    maxInstances: 1,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -131,8 +132,6 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['appium'],
-
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -154,7 +153,13 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec'],
+    reporters: ['spec',
+        ['allure', {
+            outputDir: 'allure-results',
+            disableMochaHooks: true,
+            disableWebdriverStepsReporting: true,
+        }]
+    ],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -257,8 +262,20 @@ export const config: WebdriverIO.Config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
-    // },
+    afterTest: async function (test, context, { error, result, duration, passed, retries }) {
+        if (!passed) {
+            if (!browser || !browser.sessionId) {
+                console.warn('Sesión de WebDriver no activa; se omite captura de pantalla.');
+                return;
+            }
+            try {
+                const screenshot = await browser.takeScreenshot();
+                allure.addAttachment(`Screenshot - ${test.title}`, Buffer.from(screenshot, 'base64'), 'image/png');
+            } catch (captureError) {
+                console.warn('No se pudo capturar screenshot para Allure:', captureError);
+            }
+        }
+    },
 
 
     /**

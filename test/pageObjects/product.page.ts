@@ -1,4 +1,7 @@
-export class ProductPage {
+import { step } from '../utils/allureSteps';
+import { BasePage } from './base.page';
+
+export class ProductPage extends BasePage {
     private get title() { return $('#productTV') }
     private get fotoDelProducto() { return $('~Displays selected product') }
     private get precioDelProducto() { return $('#priceTV') }
@@ -11,43 +14,46 @@ export class ProductPage {
     private get botonAgregarAlCarrito() { return $('#cartBt') }
 
     public async verificarTituloDelProducto() {
-        expect(await this.title.isDisplayed()).toBe(true)
+        await this.assertVisible(this.title, 'Verificar título del producto')
     }
 
     public async verificarFotoDelProducto() {
-        expect(await this.fotoDelProducto.isDisplayed()).toBe(true)
+        await this.assertVisible(this.fotoDelProducto, 'Verificar foto del producto')
     }
 
     public async verificarPrecioDelProducto() {
-        expect(await this.precioDelProducto.isDisplayed()).toBe(true)
+        await this.assertVisible(this.precioDelProducto, 'Verificar precio del producto')
     }
 
     public async verificarContenedorRating() {
-        expect(await this.contenedorRating.isDisplayed()).toBe(true)
+        await this.assertVisible(this.contenedorRating, 'Verificar contenedor de rating')
     }
 
     public async verificarListaDeEstrellas() {
-        expect(await this.listaDeEstrellas.length).toBe(5)
+        await step('Verificar que se muestren cinco estrellas', async () => {
+            const estrellas = await this.listaDeEstrellas
+            expect(estrellas.length).toBe(5)
+        })
     }
 
     public async verificarListaDeColoresDisponibles() {
-        expect(await this.listaDeColoresDisponibles.isDisplayed()).toBe(true)
+        await this.assertVisible(this.listaDeColoresDisponibles, 'Verificar colores disponibles')
     }
 
     public async verificarBotonDeMenos() {
-        expect(await this.botonDeMenos.isDisplayed()).toBe(true)
+        await this.assertVisible(this.botonDeMenos, 'Verificar botón disminuir cantidad')
     }
 
     public async verificarBotonDeMas() {
-        expect(await this.botonDeMas.isDisplayed()).toBe(true)
+        await this.assertVisible(this.botonDeMas, 'Verificar botón aumentar cantidad')
     }
 
     public async verificarCantidad() {
-        expect(await this.cantidad.isDisplayed()).toBe(true)
+        await this.assertVisible(this.cantidad, 'Verificar campo de cantidad')
     }
 
     public async verificarBotonAgregarAlCarrito() {
-        expect(await this.botonAgregarAlCarrito.isDisplayed()).toBe(true)
+        await this.assertVisible(this.botonAgregarAlCarrito, 'Verificar botón agregar al carrito')
     }
 
     public async verificarQueTodosLosElementosEstenPresentes() {
@@ -64,19 +70,19 @@ export class ProductPage {
     }
 
     public async aumentarCantidad() {
-        await this.botonDeMas.click()
+        await this.tap(this.botonDeMas, 'Incrementar cantidad')
     }
 
     public async disminuirCantidad() {
-        await this.botonDeMenos.click()
+        await this.tap(this.botonDeMenos, 'Disminuir cantidad')
     }
 
     public async obtenerCantidad(): Promise<string> {
-        return await this.cantidad.getText()
+        return await this.readText(this.cantidad, 'Obtener cantidad seleccionada')
     }
 
     public async agregarAlCarrito() {
-        await this.botonAgregarAlCarrito.click()
+        await this.tap(this.botonAgregarAlCarrito, 'Agregar producto al carrito')
     }
 
     public async establecerCantidad(cantidadDeseada: number) {
@@ -94,6 +100,7 @@ export class ProductPage {
     }
 
     public async obtenerNombreDelProducto(): Promise<string> {
-        return await this.title.getText()
+        return await this.readText(this.title, 'Obtener nombre del producto')
     }
+
 }
