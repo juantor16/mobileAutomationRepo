@@ -1,6 +1,3 @@
-import path from 'path';
-import allure from '@wdio/allure-reporter';
-
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -8,23 +5,19 @@ export const config: WebdriverIO.Config = {
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
-    tsConfigPath: './tsconfig.json',
+    tsConfigPath: './tsconfig.e2e.json',
     
     port: 4723,
     //
     // =================
     // Service Providers
     // =================
-    services: [['appium', {
-        command: 'appium'
-    }]],
-    //
     // WebdriverIO supports Sauce Labs, Browserstack, Testing Bot and LambdaTest (other cloud providers
     // should work too though). These services define specific user and key (or access key)
     // values you need to put in here in order to connect to these services.
     //
-    user: process.env["oauth-juantor16-e6c93"],
-    key: process.env["92f0dd4e-d6ca-4d0b-a4f8-98375e2a0758"],
+    user: process.env.oauth-juan.torres-53030,
+    key: process.env.85a81524-74b2-4b41-8623-faea8478e932,
     //
     // If you run your tests on Sauce Labs you can specify the region you want to run your tests
     // in via the `region` property. Available short handles for regions are `us` (default) and `eu`.
@@ -47,7 +40,7 @@ export const config: WebdriverIO.Config = {
     // of the config file unless it's absolute.
     //
     specs: [
-        './test/specs/**/*.ts'
+        // ToDo: define location for spec files here
     ],
     // Patterns to exclude.
     exclude: [
@@ -69,7 +62,7 @@ export const config: WebdriverIO.Config = {
     // and 30 processes will get spawned. The property handles how many capabilities
     // from the same test should run tests.
     //
-    maxInstances: 1,
+    maxInstances: 10,
     //
     // If you have trouble getting all important capabilities together, check out the
     // Sauce Labs platform configurator - a great tool to configure your capabilities:
@@ -78,11 +71,10 @@ export const config: WebdriverIO.Config = {
     capabilities: [{
         // capabilities for local Appium web tests on an Android Emulator
         platformName: 'Android',
-        'appium:deviceName': 'Pixel_6',
-        'appium:platformVersion': '16.0',
-        'appium:automationName': 'UiAutomator2',
-        'appium:app': path.resolve('./data/mda-2.2.0-25.apk'),
-        'appium:autoGrantPermissions': true,
+        browserName: 'Chrome',
+        'appium:deviceName': 'Android GoogleAPI Emulator',
+        'appium:platformVersion': '12.0',
+        'appium:automationName': 'UiAutomator2'
     }],
 
     //
@@ -132,6 +124,8 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
+    services: ['appium', 'sauce'],
+
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
     // see also: https://webdriver.io/docs/frameworks
@@ -153,13 +147,7 @@ export const config: WebdriverIO.Config = {
     // Test reporter for stdout.
     // The only one supported by default is 'dot'
     // see also: https://webdriver.io/docs/dot-reporter
-    reporters: ['spec',
-        ['allure', {
-            outputDir: 'allure-results',
-            disableMochaHooks: true,
-            disableWebdriverStepsReporting: true,
-        }]
-    ],
+    reporters: ['spec'],
 
     // Options to be passed to Mocha.
     // See the full list at http://mochajs.org/
@@ -262,20 +250,8 @@ export const config: WebdriverIO.Config = {
      * @param {boolean} result.passed    true if test has passed, otherwise false
      * @param {object}  result.retries   information about spec related retries, e.g. `{ attempts: 0, limit: 0 }`
      */
-    afterTest: async function (test, context, { error, result, duration, passed, retries }) {
-        if (!passed) {
-            if (!browser || !browser.sessionId) {
-                console.warn('Sesión de WebDriver no activa; se omite captura de pantalla.');
-                return;
-            }
-            try {
-                const screenshot = await browser.takeScreenshot();
-                allure.addAttachment(`Screenshot - ${test.title}`, Buffer.from(screenshot, 'base64'), 'image/png');
-            } catch (captureError) {
-                console.warn('No se pudo capturar screenshot para Allure:', captureError);
-            }
-        }
-    },
+    // afterTest: function(test, context, { error, result, duration, passed, retries }) {
+    // },
 
 
     /**
