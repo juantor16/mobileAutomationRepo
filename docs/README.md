@@ -11,7 +11,8 @@ Generado por Hephaestus AI · 2026-02-26
 |---------|-------------|
 | `course-map.md` | Inventario completo del contenido disponible y pendiente en la plataforma |
 | `repo-analysis.md` | Estado del repo: qué está implementado y qué falta + sugerencias |
-| `postman-quest-analysis.md` | Análisis del curso Postman Quest e ideas para completarlo |
+| `postman-quest-analysis.md` | Análisis del curso Postman Quest (gamificado) e ideas para completarlo |
+| `postman-course-videos.md` | Plan de completición del curso Postman con videos (3 grabados, resto pendiente) |
 
 ### 🎬 Guiones de grabación (`guiones/`)
 | Archivo | Módulo | Videos |
