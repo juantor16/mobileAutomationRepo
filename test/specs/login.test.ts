@@ -1,6 +1,17 @@
 import { SidebarPage } from "../pageObjects/sidebar.page";
 import { LoginPage } from "../pageObjects/login.page";
 import { ProductsPage } from "../pageObjects/products.page";
+import type { ChainablePromiseElement } from 'webdriverio';
+
+type EscenarioNegativo = {
+    nombre: string;
+    email: string;
+    password: string;
+    getMensajeDeError: (loginPage: LoginPage) => ChainablePromiseElement;
+};
+
+// Package name de la app — necesario para reiniciarla entre tests y asegurar aislamiento.
+const APP_PACKAGE = 'com.saucelabs.mydemoapp.android';
 
 describe('Test de login', () => {
     let sidebarPage: SidebarPage
@@ -11,6 +22,15 @@ describe('Test de login', () => {
         sidebarPage = new SidebarPage()
         loginPage = new LoginPage()
         productsPage = new ProductsPage()
+
+        // Reset al estado inicial: matamos y relanzamos la app para que cada test
+        // arranque desde la pantalla de productos sin estado de sesiones previas.
+        try {
+            await driver.terminateApp(APP_PACKAGE)
+        } catch {
+            // La app no estaba corriendo, no es un error real.
+        }
+        await driver.activateApp(APP_PACKAGE)
     })
 
     it('deberia permitirnos iniciar sesion con credenciales validas', async () => {
@@ -20,12 +40,46 @@ describe('Test de login', () => {
         await sidebarPage.desloguear()
     })
 
-    it('deberia mostrar un mensaje de error cuando no ingresamos contraseña', async () => {
-        await sidebarPage.irALogin()
-        await loginPage.ingresarEmail('email_invalido@example.com')
-        await loginPage.hacerClickEnBotonLogin()
+    // Nota didáctica: la app demo de Sauce Labs reusa el mismo TextView (`passwordErrorTV`)
+    // para mostrar distintos mensajes de error (password requerido, usuario bloqueado, etc.).
+    // El element locator es el mismo; lo que cambia es el texto adentro. En una app real
+    // con validación de "credenciales no coinciden" tendríamos un cuarto escenario apuntando
+    // al mismo o a otro locator. Acá nos quedamos con los tres que la app efectivamente
+    // soporta.
+    const escenariosNegativos: EscenarioNegativo[] = [
+        {
+            nombre: 'campos vacios',
+            email: '',
+            password: '',
+            getMensajeDeError: (lp) => lp.mensajeDeErrorDeUsername,
+        },
+        {
+            nombre: 'password vacio',
+            email: 'bod@example.com',
+            password: '',
+            getMensajeDeError: (lp) => lp.mensajeDeErrorDePassword,
+        },
+        {
+            nombre: 'usuario bloqueado',
+            email: 'alice@example.com',
+            password: '10203040',
+            getMensajeDeError: (lp) => lp.mensajeDeErrorDePassword,
+        },
+    ];
 
-        //verificamos el mensaje de error
-         expect( await loginPage.mensajeDeErrorDePassword).toBeDisplayed()
-    })
+    escenariosNegativos.forEach((escenario) => {
+        it(`deberia mostrar error con ${escenario.nombre}`, async () => {
+            await sidebarPage.irALogin()
+
+            if (escenario.email !== '') {
+                await loginPage.ingresarEmail(escenario.email)
+            }
+            if (escenario.password !== '') {
+                await loginPage.ingresarPassword(escenario.password)
+            }
+            await loginPage.hacerClickEnBotonLogin()
+
+            await expect(escenario.getMensajeDeError(loginPage)).toBeDisplayed()
+        });
+    });
 })

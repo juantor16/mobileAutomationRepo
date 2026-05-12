@@ -11,6 +11,7 @@ export class LoginPage extends BasePage {
     private get inputPassword(){ return $('#passwordET')}
     private get botonLoginDashboard(){ return $('~Tap to login with given credentials')}
     public get mensajeDeErrorDePassword(){ return $('#passwordErrorTV')}
+    public get mensajeDeErrorDeUsername(){ return $('#nameErrorTV')}
 
     // Acciones
     public async ingresarCredenciales(email: string, password: string){

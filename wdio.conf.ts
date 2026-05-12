@@ -1,3 +1,5 @@
+import path from 'node:path';
+
 export const config: WebdriverIO.Config = {
     //
     // ====================
@@ -5,25 +7,16 @@ export const config: WebdriverIO.Config = {
     // ====================
     // WebdriverIO supports running e2e tests as well as unit and component tests.
     runner: 'local',
-    tsConfigPath: './tsconfig.e2e.json',
-    
+    tsConfigPath: './tsconfig.json',
+
     port: 4723,
     //
     // =================
     // Service Providers
     // =================
-    // WebdriverIO supports Sauce Labs, Browserstack, Testing Bot and LambdaTest (other cloud providers
-    // should work too though). These services define specific user and key (or access key)
-    // values you need to put in here in order to connect to these services.
+    // Para correr local contra emulador no necesitamos user/key de Sauce.
+    // Los runs en cloud usan wdio.sauce.android.conf.ts y wdio.browserstack.android.conf.ts.
     //
-    user: process.env.oauth-juan.torres-53030,
-    key: process.env.85a81524-74b2-4b41-8623-faea8478e932,
-    //
-    // If you run your tests on Sauce Labs you can specify the region you want to run your tests
-    // in via the `region` property. Available short handles for regions are `us` (default) and `eu`.
-    // These regions are used for the Sauce Labs VM cloud and the Sauce Labs Real Device Cloud.
-    // If you don't provide the region it will default for the `us`
-    region: 'us',
     //
     // ==================
     // Specify Test Files
@@ -69,12 +62,14 @@ export const config: WebdriverIO.Config = {
     // https://saucelabs.com/platform/platform-configurator
     //
     capabilities: [{
-        // capabilities for local Appium web tests on an Android Emulator
+        // capabilities para correr la app nativa en el emulador local (AVD Pixel_6_2, Android 14)
         platformName: 'Android',
-        browserName: 'Chrome',
-        'appium:deviceName': 'Android GoogleAPI Emulator',
-        'appium:platformVersion': '12.0',
-        'appium:automationName': 'UiAutomator2'
+        'appium:deviceName': 'Pixel_6_2',
+        'appium:platformVersion': '14',
+        'appium:automationName': 'UiAutomator2',
+        'appium:app': path.resolve('./data/mda-2.2.0-25.apk'),
+        'appium:autoGrantPermissions': true,
+        'appium:noReset': false
     }],
 
     //
@@ -124,7 +119,7 @@ export const config: WebdriverIO.Config = {
     // Services take over a specific job you don't want to take care of. They enhance
     // your test setup with almost no effort. Unlike plugins, they don't add new
     // commands. Instead, they hook themselves up into the test process.
-    services: ['appium', 'sauce'],
+    services: ['appium'],
 
     // Framework you want to run your specs with.
     // The following are supported: Mocha, Jasmine, and Cucumber
